@@ -13,11 +13,6 @@ from .storage.file_storage import storage
 load_dotenv()
 
 # Get configuration from environment variables
-try:
-    PORT = int(os.getenv("PORT", "8000"))
-except ValueError:
-    PORT = 8000
-
 HOST = os.getenv("HOST", "0.0.0.0")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
@@ -40,7 +35,6 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "ok",
-        "port": PORT,
         "host": HOST,
         "frontend_url": FRONTEND_URL
     }

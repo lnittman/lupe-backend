@@ -72,8 +72,8 @@ class FileStorage:
             except Exception as e:
                 print(f"Error cleaning up {path}: {e}")
 
-# Create a global instance
+# Create a global instance using environment variables
 storage = FileStorage(
-    upload_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'uploads'),
-    temp_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'temp')
+    upload_dir=os.getenv('UPLOAD_DIR', 'uploads'),
+    temp_dir=os.getenv('TEMP_DIR', 'temp')
 ) 
