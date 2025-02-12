@@ -13,7 +13,11 @@ from .storage.file_storage import storage
 load_dotenv()
 
 # Get configuration from environment variables
-PORT = int(os.getenv("PORT", 8000))
+try:
+    PORT = int(os.getenv("PORT", "8000"))
+except ValueError:
+    PORT = 8000
+
 HOST = os.getenv("HOST", "0.0.0.0")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
@@ -34,7 +38,12 @@ stem_separator = create_stem_separator()
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "port": PORT,
+        "host": HOST,
+        "frontend_url": FRONTEND_URL
+    }
 
 @app.post("/api/separate")
 async def separate_audio(file: UploadFile):
