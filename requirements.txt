@@ -1,5 +1,9 @@
-fastapi==0.109.2
+# Web Framework
+fastapi<0.100.0  # Using older version for better compatibility
 python-multipart==0.0.9
-uvicorn==0.27.1
+uvicorn<0.24.0
 aiofiles==23.2.1
-python-dotenv==1.0.1
+python-dotenv==1.0.0
+
+# Audio Processing
+soundfile>=0.12.1  # For audio file handling

@@ -1,10 +1,17 @@
 import os
 from pathlib import Path
 from typing import List
-from .docker import run_spleeter_docker
+from spleeter.separator import Separator
 
 class StemSeparator:
     """Service for separating audio stems using Spleeter."""
+    
+    def __init__(self):
+        """Initialize the Spleeter separator."""
+        self.separator = Separator(
+            'spleeter:4stems-16kHz',
+            multiprocess=False  # More stable in container
+        )
     
     async def separate(self, input_path: str, output_dir: str) -> List[str]:
         """
@@ -21,20 +28,33 @@ class StemSeparator:
             RuntimeError: If separation fails
         """
         try:
-            # Run Spleeter in Docker
-            await run_spleeter_docker(input_path, output_dir)
+            # Convert paths to absolute paths
+            input_path = str(Path(input_path).resolve())
+            output_dir = str(Path(output_dir).resolve())
             
-            # Get the base name of the input file without extension
-            file_base_name = Path(input_path).stem
-            stem_dir = Path(output_dir) / file_base_name
+            print(f"Processing file: {input_path}")
+            print(f"Output directory: {output_dir}")
+            
+            # Create output directory
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Separate the stems
+            self.separator.separate_to_file(
+                input_path,
+                output_dir,
+                filename_format='{instrument}.{codec}',
+                codec='wav',
+                bitrate='256k',
+                duration=None  # Process entire file
+            )
             
             # Expected stem files
             expected_files = ['vocals.wav', 'drums.wav', 'bass.wav', 'other.wav']
             stem_paths = []
             
-            # Verify and collect output files
+            # Verify and collect output files - look directly in output directory
             for file in expected_files:
-                stem_path = stem_dir / file
+                stem_path = Path(output_dir) / file
                 if not stem_path.exists():
                     raise RuntimeError(f"Missing output file: {file}")
                 stem_paths.append(str(stem_path))

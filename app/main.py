@@ -56,18 +56,31 @@ async def separate_audio(file: UploadFile):
     Returns:
         Dictionary containing base64-encoded stems
     """
-    if not file.filename or not file.filename.lower().endswith(('.mp3', '.wav')):
-        raise HTTPException(status_code=400, detail="Invalid audio file")
+    # More permissive file validation
+    if not file or not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+    
+    # Check file extension
+    allowed_extensions = {'.mp3', '.wav', '.m4a', '.aac', '.ogg', '.flac'}
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid file type. Allowed types: {', '.join(allowed_extensions)}"
+        )
     
     try:
         # Save the uploaded file
         input_path = await storage.save_upload(file)
+        print(f"File saved at: {input_path}")
         
         # Create a temporary directory for stems
         output_dir = storage.create_temp_dir()
+        print(f"Output directory created at: {output_dir}")
         
         # Separate the audio
         stem_paths = await stem_separator.separate(input_path, output_dir)
+        print(f"Stems generated: {stem_paths}")
         
         # Read and encode the stems
         stems = []

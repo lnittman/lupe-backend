@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   backend:
     build: .
@@ -7,8 +5,8 @@ services:
       - "${PORT:-8000}:${PORT:-8000}"
     volumes:
       - ./uploads:/app/uploads
-      - ./pretrained_models:/app/pretrained_models
       - ./temp:/app/temp
+      - ./pretrained_models:/app/pretrained_models
     environment:
       - PYTHONUNBUFFERED=1
       - PORT=${PORT:-8000}
@@ -17,17 +15,9 @@ services:
       - UPLOAD_DIR=/app/uploads
       - TEMP_DIR=/app/temp
       - MODEL_PATH=/app/pretrained_models
-    depends_on:
-      - spleeter
     restart: unless-stopped
 
-  spleeter:
-    image: deezer/spleeter:3.8
-    platform: linux/amd64
-    volumes:
-      - ./uploads:/input
-      - ./temp:/output
-      - ./pretrained_models:/model
-    environment:
-      - MODEL_PATH=/model
-      - CUDA_VISIBLE_DEVICES=-1  # Disable GPU usage 
+volumes:
+  uploads:
+  temp:
+  pretrained_models:
