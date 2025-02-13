@@ -9,8 +9,8 @@ if __name__ == "__main__":
     print(f"All env vars: {dict(os.environ)}")
     
     try:
-        # Get port from environment variable or default to 8000
-        port = int(os.environ.get("PORT", "8000"))
+        # Get port from environment variable with a default fallback
+        port = int(os.getenv("PORT", "8000"))
         print(f"Parsed port value: {port}")
         
         # Run the FastAPI application
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         )
     except ValueError as e:
         print(f"Error parsing PORT value: {e}")
-        sys.exit(1)  # Exit with error code
+        sys.exit(1)
     except Exception as e:
         print(f"Unexpected error: {e}")
-        sys.exit(1)  # Exit with error code 
+        sys.exit(1) 

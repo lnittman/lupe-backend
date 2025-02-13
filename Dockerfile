@@ -7,7 +7,8 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    PORT=8000
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -28,9 +29,6 @@ COPY . .
 
 # Create necessary directories
 RUN mkdir -p uploads temp pretrained_models
-
-# Expose port
-EXPOSE 8000
 
 # Run the application using our start script
 CMD ["python", "start.py"] 
